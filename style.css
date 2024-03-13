@@ -1,0 +1,46 @@
+ul {
+    list-style: none;
+}
+.bank-icon {
+    width: 150px;
+    height: auto;
+}
+#entrance-content {
+    display: block;
+}
+#bank-content {
+    display: none;
+}
+#customer-content {
+    display: none;
+}
+#new-customer {
+    display: none;
+}
+#existing-customer {
+    display: none;
+}
+.wrong-details {
+    display: none;
+}
+.success-log {
+    display: none;
+}
+.bank-balance {
+    display: none;
+}
+#customers-list {
+    display: none;
+}
+.new-details {
+    display: none;
+}
+.customer-welcome {
+    display: none;
+}
+.customer-actions {
+    display: none;
+}
+.customer-transactions {
+    display: none;
+}
