@@ -12,7 +12,7 @@ const formNewCustomer = document.getElementById("new-customer-form");
 const loginForm = document.querySelector(".existing-customer-form");
 
 // ------Logic Elements------
-const custumersArr = {};
+const CustArr = [];
 let loggedUser = {};
 let dailyDeposit = 0;
 let dailyWithdrawal = 0;
@@ -188,13 +188,13 @@ function numberOfCustomers() {
 }
 
 function getCustomersList() {
-  for (let i = 0; i > localStorage.length; i++) {
-    let text = localStorage.getItem(i);
-    let customer = JSON.parse(text);
-    custumersArr.push(customer);
+
+  for (let i = 0; i < keys_id.length; i++) {
+    const stored = localStorage.getItem(i);
+    const storedUsers = JSON.parse(stored);
+    CustArr.push(storedUsers);
   }
-  // return custumersArr;
-  console.log(custumersArr);
+
 }
 
 
@@ -299,8 +299,8 @@ if (document.body.contains(customer_section)) {
       transactionsCustomer,
     ];
 
-    if (localStorage.getItem(loginID)) {
-      const userCheck = JSON.parse(localStorage.getItem(loginID));
+    if (localStorage.getItem(`bank_id_${loginID}`)) {
+      const userCheck = JSON.parse(localStorage.getItem(`bank_id_${loginID}`));
       if (userCheck.id == loginID && userCheck.pinNumber == secretCode) {
         if (success_log.style.display !== 'block') {
             success_log.style.display = 'block';
