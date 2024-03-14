@@ -30,6 +30,13 @@ class BankAccount {
     BankAccount.totalUsers++;
   }
 
+  getLocalStorageObjects() {
+    for (let i = 0; i < localStorage.length; i++) {
+      let key = localStorage.getItem(`bank_id${this.id}`);
+      return JSON.parse(key);
+    }
+  }
+
   generateAccountNumber() {
     // Generating a random 8-digit account number
     return Math.floor(Math.random() * 90000000) + 10000000;
@@ -301,6 +308,9 @@ if (document.body.contains(customer_section)) {
 
     if (localStorage.getItem(`bank_id_${loginID}`)) {
       const userCheck = JSON.parse(localStorage.getItem(`bank_id_${loginID}`));
+      let fullName = document.querySelector('.name-of-account');
+      let userID = document.querySelector('.id-of-account');
+      let userNumber = document.querySelector('.account-number');
       if (userCheck.id == loginID && userCheck.pinNumber == secretCode) {
         if (success_log.style.display !== 'block') {
             success_log.style.display = 'block';
@@ -310,6 +320,9 @@ if (document.body.contains(customer_section)) {
         }
 
         function showInfo() {
+          fullName.innerHTML = `Name: ${userCheck.firstName} ${userCheck.lastName}`;
+          userID.innerHTML = `ID: ${userCheck.id}`;
+          userNumber.innerHTML = `Account Number: ${userCheck.accountNumber}`;
           customerArr.forEach((element) => {
            element.style.cssText = "display:flex;";
           });
