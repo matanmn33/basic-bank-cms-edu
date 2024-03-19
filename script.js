@@ -86,17 +86,17 @@ class BankAccount {
         const now = DateTime.now();
         let dailyDepositAmount = this.getDailyDepsoit();
         if (amount>5000){      
-            alert('Maximum single deposit is 5000');
+            alert('Maximum single deposit is 5000.');
         }else if(dailyDepositAmount + amount > 5000){
-            alert(`Maximum daily deposit is 5000, you have already deposits ${dailyDepositAmount} today !!!`);
+            alert(`Maximum daily deposit is 5000, you have already deposits ${dailyDepositAmount} today!`);
         }else if(amount<1){
-            alert('Wrong amount to deposit !');
+            alert('Wrong amount to deposit!');
         }else{
             this.balance += amount;
             BankAccount.totalMoney += amount;
             this.transactions.push({ type: "deposit", date: now, amount: amount });
             this.insertIntoLocalStorage();
-            alert(`Successfully deposited שח ${amount} into account ${this.accountNumber}`);
+            alert(`Successfully deposited ${amount}$ into account ${this.accountNumber}`);
         }   
     }
 
@@ -104,22 +104,22 @@ class BankAccount {
         const now = DateTime.now();
         let dailyWithdrawAmount = this.getDailyWithdrawal();
         if (amount > 2000){
-            alert("Maximum single withdrawal is 2000");
+            alert("Maximum single withdrawal is 2000.");
         }else if(dailyWithdrawAmount + amount > 2000){
-            alert(`Maximum daily withdrawal is 2000, you have already withdraw ${dailyWithdrawAmount} today !!!`);
+            alert(`Maximum daily withdrawal is 2000, you have already withdraw ${dailyWithdrawAmount} today!`);
         }else if(amount > 0 && amount <= this.balance) {
             this.balance -= amount;
             BankAccount.totalMoney -= amount;
             this.transactions.push({ type: "withdrawal", date: now, amount: amount });
             this.insertIntoLocalStorage();
-            alert(`Successfully withdrew שח ${amount} from account ${this.accountNumber}`);
+            alert(`Successfully withdrew ${amount}$ from account ${this.accountNumber}`);
         }else{
             alert("Insufficient funds or invalid amount for withdrawal.");
         }
     }
 
     getBalance() {
-        return `Account ${this.accountNumber} balance: שח${this.balance}`;
+        return `Account ${this.accountNumber} balance: ${this.balance}$`;
     }
 
     static totalUsers = 0;
@@ -134,7 +134,7 @@ class BankAccount {
             return accumulator += Number(item.balance);
         },0);
         document.querySelector('.bank-balance-amount').innerHTML = BankAccount.totalMoney;
-        return `Total money in the bank: שח ${BankAccount.totalMoney}`;
+        return `${BankAccount.totalMoney}$`;
        
     }
 }
@@ -146,6 +146,7 @@ function importAccountsFromLocalStorage (){
       accountsArr[i] = new BankAccount (customer.firstName,customer.lastName,customer.id);
       accountsArr[i].pinNumber = customer.pinNumber;
       accountsArr[i].transactions = customer.transactions;
+      accountsArr[i].accountNumber = customer.accountNumber;
       accountsArr[i].balance = accountsArr[i].calculateBalance();        
   }
 }
@@ -156,6 +157,7 @@ function checkNewIdLocalStorage(newId) {
     let customer = JSON.parse(text);
     accountsArr[i] = new BankAccount (customer.firstName,customer.lastName,customer.id);
     accountsArr[i].pinNumber = customer.pinNumber;
+    accountsArr[i].accountNumber = customer.accountNumber;
     accountsArr[i].transactions = customer.transactions;
     accountsArr[i].balance = accountsArr[i].calculateBalance();        
 }
@@ -184,29 +186,21 @@ function validateNewAccount(fName,lName,newId){
 }
 
 function getCustomersList(){
-  document.querySelector('.total_users').innerHTML = `Number of accounts: ${accountsArr.length}`;
+  document.querySelector('.total_users').innerHTML = `Total of ${accountsArr.length} Accounts`;
   let table = document.querySelector('.customers-table-body');
-  table.innerHTML = "";
+  // table.innerHTML = "";
   for (i = 0; i < accountsArr.length; i++) {
-      let row = document.createElement("tr")
-      let c1 = document.createElement("td")
-      let c2 = document.createElement("td")
-      let c3 = document.createElement("td")
-      let c4 = document.createElement("td")
-      let c5 = document.createElement("td")
-      let c6 = document.createElement("td")
-      c1.innerText = accountsArr[i].firstName
-      c2.innerText = accountsArr[i].lastName
-      c3.innerText = accountsArr[i].id
-      c4.innerText = accountsArr[i].accountNumber
-      c5.innerText = accountsArr[i].balance
-      c6.innerText = accountsArr[i].pinNumber
+      let row = document.createElement("tr");
+      let c1 = document.createElement("td");
+      let c2 = document.createElement("td");
+      let c3 = document.createElement("td");
+      let pStart = document.createElement("p");
+      c1.innerHTML = `${accountsArr[i].firstName}  ${accountsArr[i].lastName}`;
+      c2.innerHTML = `${accountsArr[i].accountNumber} ${'<p class="m-0 p-0 text-success">'} (${accountsArr[i].id}) ${'</p> <p class="m-0 p-0 text-danger">'} [${+accountsArr[i].pinNumber}] ${'</p>'}`;
+      c3.innerHTML = accountsArr[i].balance
       row.appendChild(c1);
       row.appendChild(c2);
       row.appendChild(c3);
-      row.appendChild(c4);
-      row.appendChild(c5);
-      row.appendChild(c6);
       table.appendChild(row)
   }
 }
@@ -254,7 +248,17 @@ function clearNewCustomer() {
   document.querySelector(".new-details").style.display = 'none';
 }
 
-importAccountsFromLocalStorage ()
+importAccountsFromLocalStorage();
+
+async function reloadIntoExistion() {
+  let bodyElement = document.querySelector('body')
+  if (document.body.contains(bodyElement)) {
+  customer_section.style.display = 'block';
+  existing_customer.style.display = 'block';
+  entrance_section.style.display = 'none';
+  bank_section.style.display = 'none';
+  }
+}
 
 // Show/Hide for Entrance Content Elements
 if (document.body.contains(entrance_section)) {
@@ -302,20 +306,25 @@ if (document.body.contains(customer_section)) {
     const btnNewCustomer = document.querySelector(".btn-new-customer");
     const btnExistingCustomer = document.querySelector(".btn-exist-customer");
 
+    btnNewCustomer.addEventListener("click", () => {
+      if (new_customer.style.display !== "block") {
+        new_customer.style.display = "block";
+        existing_customer.style.display = "none";
+        // Create Customer Button with Show/Hide Element on 4-digit code
+        let createCustomerBtn = document.querySelector("#create_newcustomer");
+        createCustomerBtn.addEventListener("click", () => {
+          let newDetailsBtn = document.querySelector(".new-details");
+          newDetailsBtn.style.display = "block";
+        });
+      } else {
+        new_customer.style.display = "none";
+      }
+    });
+
   // Create New Customer via the New Customer Form and store it as BankAccount inside the localStorage mentioned before
   formNewCustomer.addEventListener("submit", (e) => {
     e.preventDefault();
-  });
 
-  btnNewCustomer.addEventListener("click", () => {
-    if (new_customer.style.display !== "block") {
-      new_customer.style.display = "block";
-      existing_customer.style.display = "none";
-      // Create Customer Button with Show/Hide Element on 4-digit code
-      let createCustomerBtn = document.querySelector("#create_newcustomer");
-      createCustomerBtn.addEventListener("click", () => {
-        
-        // let login_Form = document.querySelector(".login-form");
         let newDetails = document.querySelector(".new-details");
         let fName = document.querySelector("#firstName_newcustomer");
         let lName = document.querySelector("#lastName_newcustomer");
@@ -330,13 +339,13 @@ if (document.body.contains(customer_section)) {
                 newCustomerWarning.style.display = 'none';
                 let newUser = new BankAccount (fName.value, lName.value, newId.value);
                 localStorage.setItem(newUser.id, JSON.stringify(newUser));
-                document.querySelector(".countDown").innerHTML = 10;
                 const h5code = document.querySelector(".new-4-digit-code");
                 let theCode = `${newUser.pinNumber}`;
                 h5code.append(theCode);
                 setTimeout(()=>{
                   callback();
-                },10000);
+                  importAccountsFromLocalStorage();
+                },3500);
               }
               createNewAccount(()=>{
                 clearNewCustomer();
@@ -353,10 +362,6 @@ if (document.body.contains(customer_section)) {
               break;
         };
       });
-    } else {
-      new_customer.style.display = "none";
-    }
-  });
 
   btnExistingCustomer.addEventListener("click", () => {
     if (existing_customer.style.display !== "block") {
@@ -375,7 +380,7 @@ if (document.body.contains(customer_section)) {
         if (checkCustomerLogin()){
             wrongDetails.style.display = 'none';
             document.querySelector('.login-form').style.display = 'none';
-            document.querySelector('.action-amount').style.display = 'flex';
+            document.querySelector('.action-amount-div').style.display = 'block';
             let welcomeCustomer = document.querySelector('.customer-welcome');
             let actionsCustomer = document.querySelector('.customer-actions');
             let transactionsCustomer = document.querySelector('.customer-transactions');
@@ -383,9 +388,10 @@ if (document.body.contains(customer_section)) {
                 customerArr.forEach(element => {
                     element.style.cssText = 'display:flex;'; 
                 });
-            document.querySelector('.name-of-account').innerHTML = ` ${loggedUser.firstName} ${loggedUser.lastName}`;
-            document.querySelector('.id-of-account').innerHTML = `ID: ${loggedUser.id}`;
-            document.querySelector('.customer-balance').innerHTML = `${loggedUser.balance}`; 
+            document.querySelector('.name-of-account').innerHTML = `Full Name: ${loggedUser.firstName} ${loggedUser.lastName}`;
+            document.querySelector('.id-of-account').innerHTML = `Account Number: ${loggedUser.accountNumber}`;
+            document.querySelector('.account-number').innerHTML = `ID: ${loggedUser.id}`;
+            document.querySelector('.customer-balance').innerHTML = `${loggedUser.balance}$`; 
             
             showTransactions();
         }else{
@@ -396,13 +402,13 @@ if (document.body.contains(customer_section)) {
   document.querySelector('.btn-withdraw').addEventListener('click', ()=> { 
       
       loggedUser.withdraw(Number(actionAmount.value));
-      document.querySelector('.customer-balance').innerHTML = loggedUser.balance;
+      document.querySelector('.customer-balance').innerHTML = loggedUser.balance + `$`;
       actionAmount.value = "";
       showTransactions();
   });
   document.querySelector('.btn-deposit').addEventListener('click', ()=> { 
       loggedUser.deposit(Number(actionAmount.value));
-      document.querySelector('.customer-balance').innerHTML = loggedUser.balance;
+      document.querySelector('.customer-balance').innerHTML = loggedUser.balance + `$`;
       actionAmount.value = "";
       showTransactions();
   }); 
