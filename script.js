@@ -94,7 +94,7 @@ class BankAccount {
         }else{
             this.balance += amount;
             BankAccount.totalMoney += amount;
-            this.transactions.push({ type: "deposit", date: now, amount: amount });
+            this.transactions.unshift({ type: "deposit", date: now, amount: amount });
             this.insertIntoLocalStorage();
             alert(`Successfully deposited ${amount}$ into account ${this.accountNumber}`);
         }   
@@ -110,7 +110,7 @@ class BankAccount {
         }else if(amount > 0 && amount <= this.balance) {
             this.balance -= amount;
             BankAccount.totalMoney -= amount;
-            this.transactions.push({ type: "withdrawal", date: now, amount: amount });
+            this.transactions.unshift({ type: "withdrawal", date: now, amount: amount });
             this.insertIntoLocalStorage();
             alert(`Successfully withdrew ${amount}$ from account ${this.accountNumber}`);
         }else{
@@ -222,7 +222,7 @@ function checkCustomerLogin(){
 function showTransactions() {
   let table = document.querySelector(".trans-table-body");
   table.innerHTML = "";
-  for (i = 0; i < loggedUser.transactions.length; i++) {
+  for (i = 0; i < loggedUser.transactions.length && i < 10; i++) {
       const userTrans = loggedUser.transactions[i];
       const actionDate = new DateTime(userTrans.date).setLocale('he-IL').toLocaleString();
       let row = document.createElement("tr")
